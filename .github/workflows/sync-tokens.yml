@@ -1,0 +1,32 @@
+name: Sync Design Tokens
+
+on:
+  schedule:
+    - cron: '0 6 * * 1-5' # Weekdays at 6 AM
+  workflow_dispatch:
+
+jobs:
+  sync-tokens:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Sync Figma Tokens
+        uses: tokens-studio/figma-tokens-sync@v2
+        with:
+          figma_file_key: ${{ secrets.FIGMA_FILE_KEY }}
+          figma_token: ${{ secrets.FIGMA_API_TOKEN }}
+          output_path: './design-tokens/tokens.json'
+      
+      - name: Update Tailwind Theme
+        run: |
+          if [ -f "scripts/update-tailwind-theme.js" ]; then
+            node scripts/update-tailwind-theme.js design-tokens/tokens.json
+          fi
+      
+      - name: Commit Changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore(tokens): sync latest Figma tokens'
+          branch: main
+
