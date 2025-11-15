@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { AIConnector, AIConfig } from '@/lib/ai/connectors'
+import type { AIConfig } from '@/lib/ai/connectors'
 import { encryptValue, decryptValue, isEncrypted } from '@/lib/security/encryption'
 
 interface StoredAIConfig extends AIConfig {

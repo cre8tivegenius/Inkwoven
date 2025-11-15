@@ -40,14 +40,16 @@ export function EditorToolbar({
     return null
   }
 
+  const baseButton =
+    'p-2.5 rounded-2xl text-neutral-700 dark:text-neutral-100 border border-transparent hover:border-primary-200 hover:bg-primary-50/70 dark:hover:bg-neutral-800/60 transition-colors disabled:opacity-40 disabled:cursor-not-allowed'
+  const activeButton = 'bg-primary-100/80 border-primary-200 text-primary-800'
+
   return (
-    <div className="flex items-center gap-1 p-2 border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800">
+    <div className="flex flex-wrap items-center gap-1.5 p-3 border-b border-white/30 dark:border-neutral-800/60 bg-white/70 dark:bg-neutral-900/60 backdrop-blur">
       <button
         onClick={() => editor.chain().focus().toggleBold().run()}
         disabled={!editor.can().chain().focus().toggleBold().run()}
-        className={`p-2 rounded hover:bg-neutral-200 dark:hover:bg-neutral-700 ${
-          editor.isActive('bold') ? 'bg-neutral-300 dark:bg-neutral-600' : ''
-        }`}
+        className={`${baseButton} ${editor.isActive('bold') ? activeButton : ''}`}
         title="Bold (Ctrl+B)"
       >
         <Bold className="w-4 h-4" />
@@ -56,21 +58,17 @@ export function EditorToolbar({
       <button
         onClick={() => editor.chain().focus().toggleItalic().run()}
         disabled={!editor.can().chain().focus().toggleItalic().run()}
-        className={`p-2 rounded hover:bg-neutral-200 dark:hover:bg-neutral-700 ${
-          editor.isActive('italic') ? 'bg-neutral-300 dark:bg-neutral-600' : ''
-        }`}
+        className={`${baseButton} ${editor.isActive('italic') ? activeButton : ''}`}
         title="Italic (Ctrl+I)"
       >
         <Italic className="w-4 h-4" />
       </button>
 
-      <div className="w-px h-6 bg-neutral-300 dark:bg-neutral-600 mx-1" />
+      <div className="w-px h-6 bg-neutral-200 dark:bg-neutral-700 mx-1" />
 
       <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-        className={`p-2 rounded hover:bg-neutral-200 dark:hover:bg-neutral-700 ${
-          editor.isActive('heading', { level: 1 }) ? 'bg-neutral-300 dark:bg-neutral-600' : ''
-        }`}
+        className={`${baseButton} ${editor.isActive('heading', { level: 1 }) ? activeButton : ''}`}
         title="Heading 1"
       >
         <Heading1 className="w-4 h-4" />
@@ -78,9 +76,7 @@ export function EditorToolbar({
 
       <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-        className={`p-2 rounded hover:bg-neutral-200 dark:hover:bg-neutral-700 ${
-          editor.isActive('heading', { level: 2 }) ? 'bg-neutral-300 dark:bg-neutral-600' : ''
-        }`}
+        className={`${baseButton} ${editor.isActive('heading', { level: 2 }) ? activeButton : ''}`}
         title="Heading 2"
       >
         <Heading2 className="w-4 h-4" />
@@ -88,21 +84,17 @@ export function EditorToolbar({
 
       <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-        className={`p-2 rounded hover:bg-neutral-200 dark:hover:bg-neutral-700 ${
-          editor.isActive('heading', { level: 3 }) ? 'bg-neutral-300 dark:bg-neutral-600' : ''
-        }`}
+        className={`${baseButton} ${editor.isActive('heading', { level: 3 }) ? activeButton : ''}`}
         title="Heading 3"
       >
         <Heading3 className="w-4 h-4" />
       </button>
 
-      <div className="w-px h-6 bg-neutral-300 dark:bg-neutral-600 mx-1" />
+      <div className="w-px h-6 bg-neutral-200 dark:bg-neutral-700 mx-1" />
 
       <button
         onClick={() => editor.chain().focus().toggleBulletList().run()}
-        className={`p-2 rounded hover:bg-neutral-200 dark:hover:bg-neutral-700 ${
-          editor.isActive('bulletList') ? 'bg-neutral-300 dark:bg-neutral-600' : ''
-        }`}
+        className={`${baseButton} ${editor.isActive('bulletList') ? activeButton : ''}`}
         title="Bullet List"
       >
         <List className="w-4 h-4" />
@@ -110,20 +102,18 @@ export function EditorToolbar({
 
       <button
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        className={`p-2 rounded hover:bg-neutral-200 dark:hover:bg-neutral-700 ${
-          editor.isActive('orderedList') ? 'bg-neutral-300 dark:bg-neutral-600' : ''
-        }`}
+        className={`${baseButton} ${editor.isActive('orderedList') ? activeButton : ''}`}
         title="Numbered List"
       >
         <ListOrdered className="w-4 h-4" />
       </button>
 
-      <div className="w-px h-6 bg-neutral-300 dark:bg-neutral-600 mx-1" />
+      <div className="w-px h-6 bg-neutral-200 dark:bg-neutral-700 mx-1" />
 
       <button
         onClick={() => editor.chain().focus().undo().run()}
         disabled={!editor.can().chain().focus().undo().run()}
-        className="p-2 rounded hover:bg-neutral-200 dark:hover:bg-neutral-700"
+        className={baseButton}
         title="Undo (Ctrl+Z)"
       >
         <Undo className="w-4 h-4" />
@@ -132,13 +122,13 @@ export function EditorToolbar({
       <button
         onClick={() => editor.chain().focus().redo().run()}
         disabled={!editor.can().chain().focus().redo().run()}
-        className="p-2 rounded hover:bg-neutral-200 dark:hover:bg-neutral-700"
+        className={baseButton}
         title="Redo (Ctrl+Y)"
       >
         <Redo className="w-4 h-4" />
       </button>
 
-      <div className="w-px h-6 bg-neutral-300 dark:bg-neutral-600 mx-1" />
+      <div className="w-px h-6 bg-neutral-200 dark:bg-neutral-700 mx-1" />
 
       {onFontChange && (
         <FontSelector value={fontFamily} onChange={onFontChange} />
@@ -152,7 +142,7 @@ export function EditorToolbar({
         <ColorPicker label="Background Color" value={backgroundColor} onChange={onBackgroundColorChange} />
       )}
 
-      <div className="w-px h-6 bg-neutral-300 dark:bg-neutral-600 mx-1" />
+      <div className="w-px h-6 bg-neutral-200 dark:bg-neutral-700 mx-1" />
 
       {document && <ExportMenu document={document} />}
     </div>

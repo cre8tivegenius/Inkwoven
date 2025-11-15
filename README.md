@@ -12,11 +12,12 @@ A personal writing and note-taking studio blending the elegance of Apple Pages, 
 - Multi-format export: .txt, .md, .pdf, .odf
 
 ### AI Writing Assistant
+- **ChatGPT Web integration** - Free, no API keys required (opens in popup)
 - Sidebar with user-managed API credentials
 - Support for OpenAI, Anthropic, and Google Gemini
+- Optional OpenAI ChatKit integration for rich agent workflows
 - Streaming responses
 - Context-aware assistance with selected text
-- **Secure encrypted storage** for API keys
 
 ### Templates
 - Journal, Letter, Poetry, Story, and Blank templates
@@ -25,6 +26,7 @@ A personal writing and note-taking studio blending the elegance of Apple Pages, 
 ### Creative Tools
 - Morning exercises with preset and AI-generated prompts
 - Image attachments with drag-and-drop
+- **Pinterest integration** - Search and import images directly from Pinterest
 - Character management
 - World building tools
 
@@ -49,11 +51,45 @@ A personal writing and note-taking studio blending the elegance of Apple Pages, 
 - Node.js 20+
 - npm or yarn
 
+### iOS Support
+
+Inkwoven is available as a Progressive Web App (PWA) for iOS devices. See [iOS Setup Guide](./docs/IOS_SETUP.md) for:
+- Installing as PWA on iPhone/iPad
+- Creating a native iOS app with Capacitor
+- App Store distribution
+
 ### Installation
 
 ```bash
 npm install --legacy-peer-deps
 ```
+
+### Environment Variables
+
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Edit `.env` and add your Figma API credentials (optional, only needed for design token sync):
+   ```bash
+   FIGMA_FILE_KEY=your_figma_file_key
+   FIGMA_API_TOKEN=your_figma_api_token
+   ```
+
+3. (Optional) For OpenAI ChatKit integration, add:
+   ```bash
+   VITE_CHATKIT_WORKFLOW_ID=wf_your_workflow_id_here
+   ```
+   Get your workflow ID from [OpenAI Agent Builder](https://platform.openai.com/agent-builder)
+
+4. (Optional) For upcoming Google/Gemini OAuth integrations, add:
+   ```bash
+   GOOGLE_OAUTH_CLIENT_ID=your_google_client_id
+   GOOGLE_OAUTH_CLIENT_SECRET=your_google_client_secret
+   ```
+
+   **Note:** The `.env` file is gitignored for security. Never commit it to version control.
 
 ### Development
 
@@ -87,28 +123,17 @@ src/
 
 ## Design System
 
-Design tokens are managed in `design-tokens/tokens.json` and can be synced from Figma using the GitHub Actions workflow.
+Design tokens are managed in `design-tokens/tokens.json` and can be synced from Figma using the GitHub Actions workflow or by running:
 
-## Configuration
+```bash
+node scripts/sync-figma-tokens.js
+```
 
-### Adding API Keys
+## Security
 
-To use the AI Writing Assistant, you'll need to add API keys for your preferred providers:
-
-1. **In the App**: Open the AI Sidebar → Settings → Enter your API keys
-   - Keys are automatically encrypted before storage
-   - See [API Keys Setup Guide](./docs/API_KEYS_SETUP.md) for detailed instructions
-
-2. **GitHub Secrets** (for CI/CD): Set up Figma tokens for design token sync
-   - Go to Repository Settings → Secrets and variables → Actions
-   - Add `FIGMA_FILE_KEY` and `FIGMA_API_TOKEN`
-   - See [API Keys Setup Guide](./docs/API_KEYS_SETUP.md) for step-by-step instructions
-
-### Security
-
-- API keys are encrypted using Web Crypto API before storage
-- Keys are only decrypted in memory when needed
-- See [Security Documentation](./docs/SECURITY.md) for best practices
+- Never commit `.env` files containing API keys or tokens
+- Use GitHub Secrets for CI/CD workflows
+- All user data is stored locally in IndexedDB (no backend required)
 
 ## License
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import type { JSONContent } from '@tiptap/core'
 import { Header } from '@/components/Layout/Header'
 import { Main } from '@/components/Layout/Main'
 import { Editor } from '@/components/Editor/Editor'
@@ -92,7 +93,7 @@ function App() {
     }
   }
 
-  const handleEditorUpdate = async (content: { content?: Array<{ type: string; content?: Array<{ text?: string }> }> }) => {
+  const handleEditorUpdate = async (content: JSONContent) => {
     if (!documentId || !editor) return
 
     await documentService.update(documentId, {
@@ -122,7 +123,7 @@ function App() {
     if (updated) setCurrentDocument(updated)
   }
 
-  const extractTitle = (content: { content?: Array<{ type: string; content?: Array<{ text?: string }> }> }): string | null => {
+  const extractTitle = (content: JSONContent): string | null => {
     if (!content?.content) return null
     const firstParagraph = content.content.find((node) => node.type === 'paragraph')
     if (firstParagraph?.content?.[0]?.text) {
@@ -159,7 +160,7 @@ function App() {
         worldsOpen={worldsOpen}
         hasProject={selectedProjectId !== null}
       />
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden gap-4 px-2 sm:px-4 md:px-6 pb-2 sm:pb-4 md:pb-6">
         <ProjectSidebar
           selectedProjectId={selectedProjectId}
           onSelectProject={setSelectedProjectId}

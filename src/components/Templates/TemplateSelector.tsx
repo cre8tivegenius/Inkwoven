@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { FileText, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import { templates, type Template } from '@/lib/templates'
 
 interface TemplateSelectorProps {

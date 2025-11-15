@@ -1,4 +1,5 @@
 import { useEditor, EditorContent } from '@tiptap/react'
+import type { JSONContent } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
 import TextStyle from '@tiptap/extension-text-style'
 import Color from '@tiptap/extension-color'
@@ -13,8 +14,8 @@ import type { Document } from '@/types'
 
 interface EditorProps {
   document?: Document
-  content?: any
-  onUpdate?: (content: any) => void
+  content?: JSONContent
+  onUpdate?: (content: JSONContent) => void
   fontFamily?: string
   textColor?: string
   backgroundColor?: string
@@ -34,7 +35,7 @@ export function Editor({
   onTextColorChange,
   onBackgroundColorChange,
 }: EditorProps) {
-  const { setEditor, editor: storeEditor } = useEditorStore()
+  const { setEditor } = useEditorStore()
 
   const editor = useEditor({
     extensions: [
@@ -110,8 +111,12 @@ export function Editor({
         onTextColorChange={onTextColorChange}
         onBackgroundColorChange={onBackgroundColorChange}
       />
-      <div className="flex-1 overflow-auto">
-        <EditorContent editor={editor} />
+      <div className="flex-1 overflow-auto px-6 py-6 bg-gradient-to-b from-transparent via-white/30 to-transparent dark:via-neutral-900/20">
+        <div className="max-w-4xl mx-auto">
+          <div className="rounded-[2.5rem] border border-white/60 dark:border-neutral-800/70 bg-white/95 dark:bg-neutral-900/70 shadow-[0_20px_60px_rgba(36,26,21,0.12)] backdrop-blur-lg overflow-hidden">
+            <EditorContent editor={editor} className="min-h-[70vh]" />
+          </div>
+        </div>
       </div>
     </div>
   )

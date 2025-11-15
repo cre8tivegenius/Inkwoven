@@ -15,19 +15,25 @@ export function ProjectSidebar({ selectedProjectId, onSelectProject }: ProjectSi
   const [newProjectName, setNewProjectName] = useState('')
 
   useEffect(() => {
-    loadProjects()
+    let isMounted = true
+    const fetchProjects = async () => {
+      const allProjects = await projectService.getAll()
+      if (isMounted) {
+        setProjects(allProjects)
+      }
+    }
+    fetchProjects()
+    return () => {
+      isMounted = false
+    }
   }, [])
-
-  const loadProjects = async () => {
-    const allProjects = await projectService.getAll()
-    setProjects(allProjects)
-  }
 
   const handleCreateProject = async () => {
     if (!newProjectName.trim()) return
 
     const id = await projectService.create(newProjectName.trim())
-    await loadProjects()
+    const allProjects = await projectService.getAll()
+    setProjects(allProjects)
     setNewProjectName('')
     setIsCreating(false)
     onSelectProject(id)
@@ -37,7 +43,8 @@ export function ProjectSidebar({ selectedProjectId, onSelectProject }: ProjectSi
     e.stopPropagation()
     if (confirm('Are you sure you want to delete this project? All documents will be deleted.')) {
       await projectService.delete(id)
-      await loadProjects()
+      const allProjects = await projectService.getAll()
+      setProjects(allProjects)
       if (selectedProjectId === id) {
         onSelectProject(null)
       }
@@ -49,13 +56,13 @@ export function ProjectSidebar({ selectedProjectId, onSelectProject }: ProjectSi
   )
 
   return (
-    <div className="w-64 border-r border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 flex flex-col h-full">
-      <div className="p-4 border-b border-neutral-200 dark:border-neutral-700">
+    <div className="w-64 glass-panel flex flex-col h-full flex-shrink-0">
+      <div className="p-4 border-b border-white/30 dark:border-neutral-800/60">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">Projects</h2>
+          <h2 className="text-lg font-semibold font-display text-neutral-900 dark:text-neutral-50">Projects</h2>
           <button
             onClick={() => setIsCreating(true)}
-            className="p-1.5 rounded hover:bg-neutral-100 dark:hover:bg-neutral-700"
+            className="p-1.5 rounded-xl border border-transparent hover:border-primary-200 hover:bg-white/70 dark:hover:bg-neutral-800/70"
             title="New Project"
           >
             <Plus className="w-4 h-4" />
@@ -76,12 +83,12 @@ export function ProjectSidebar({ selectedProjectId, onSelectProject }: ProjectSi
                 }
               }}
               placeholder="Project name"
-              className="flex-1 px-2 py-1 text-sm border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-50"
+              className="flex-1 px-3 py-1.5 text-sm border border-white/40 dark:border-neutral-700/70 rounded-xl bg-white/80 dark:bg-neutral-900/60 text-neutral-900 dark:text-neutral-50 placeholder:text-neutral-400 dark:placeholder:text-neutral-500"
               autoFocus
             />
             <button
               onClick={handleCreateProject}
-              className="px-2 py-1 text-sm bg-primary-600 text-white rounded hover:bg-primary-700"
+              className="px-3 py-1.5 text-sm rounded-xl bg-primary-600 text-white hover:bg-primary-500 shadow shadow-primary-900/20"
             >
               Create
             </button>
@@ -89,13 +96,13 @@ export function ProjectSidebar({ selectedProjectId, onSelectProject }: ProjectSi
         )}
 
         <div className="relative">
-          <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search projects..."
-            className="w-full pl-8 pr-2 py-1.5 text-sm border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-50"
+            className="w-full pl-9 pr-3 py-2 text-sm border border-white/40 dark:border-neutral-700/70 rounded-2xl bg-white/70 dark:bg-neutral-900/40 text-neutral-900 dark:text-neutral-50 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:border-primary-300"
           />
         </div>
       </div>
@@ -103,29 +110,33 @@ export function ProjectSidebar({ selectedProjectId, onSelectProject }: ProjectSi
       <div className="flex-1 overflow-y-auto">
         <button
           onClick={() => onSelectProject(null)}
-          className={`w-full text-left px-4 py-2 flex items-center gap-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 ${
-            selectedProjectId === null ? 'bg-neutral-100 dark:bg-neutral-700' : ''
+          className={`w-full text-left px-4 py-2.5 flex items-center gap-2 rounded-2xl mx-2 mt-3 transition-colors ${
+            selectedProjectId === null
+              ? 'bg-primary-100/70 text-neutral-900'
+              : 'hover:bg-white/60 dark:hover:bg-neutral-800/60'
           }`}
         >
-          <Folder className="w-4 h-4" />
-          <span className="text-sm">All Documents</span>
+          <Folder className="w-4 h-4 text-primary-700" />
+          <span className="text-sm font-medium">All Documents</span>
         </button>
 
         {filteredProjects.map((project) => (
           <div
             key={project.id}
             onClick={() => onSelectProject(project.id)}
-            className={`group flex items-center justify-between px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer ${
-              selectedProjectId === project.id ? 'bg-neutral-100 dark:bg-neutral-700' : ''
+            className={`group flex items-center justify-between px-4 py-2.5 mx-2 mt-2 rounded-2xl cursor-pointer transition-colors ${
+              selectedProjectId === project.id
+                ? 'bg-primary-100/70 text-neutral-900'
+                : 'hover:bg-white/60 dark:hover:bg-neutral-800/60'
             }`}
           >
             <div className="flex items-center gap-2 flex-1 min-w-0">
-              <Folder className="w-4 h-4 flex-shrink-0" />
-              <span className="text-sm truncate">{project.name}</span>
+              <Folder className="w-4 h-4 flex-shrink-0 text-primary-600" />
+              <span className="text-sm truncate font-medium">{project.name}</span>
             </div>
             <button
               onClick={(e) => handleDeleteProject(project.id, e)}
-              className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-neutral-200 dark:hover:bg-neutral-600"
+              className="opacity-0 group-hover:opacity-100 p-1 rounded-full hover:bg-white/70 dark:hover:bg-neutral-700"
               title="Delete project"
             >
               <X className="w-3 h-3" />

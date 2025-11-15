@@ -1,4 +1,4 @@
-import Dexie, { Table } from 'dexie'
+import Dexie, { type Table } from 'dexie'
 import type { Project, Document, Character, World, Exercise, ImageAttachment } from '@/types'
 
 export class InkwovenDatabase extends Dexie {
@@ -67,9 +67,9 @@ export const projectService = {
 export const documentService = {
   async getAll(projectId?: string | null): Promise<Document[]> {
     if (projectId) {
-      return db.documents.where('projectId').equals(projectId).orderBy('updatedAt').reverse().toArray()
+      return db.documents.where('projectId').equals(projectId).sortBy('updatedAt').then(docs => docs.reverse())
     }
-    return db.documents.where('projectId').equals(null).orderBy('updatedAt').reverse().toArray()
+    return db.documents.filter(doc => doc.projectId === null).sortBy('updatedAt').then(docs => docs.reverse())
   },
 
   async getById(id: string): Promise<Document | undefined> {
@@ -103,7 +103,7 @@ export const documentService = {
 
 export const characterService = {
   async getAll(projectId: string): Promise<Character[]> {
-    return db.characters.where('projectId').equals(projectId).orderBy('name').toArray()
+    return db.characters.where('projectId').equals(projectId).sortBy('name')
   },
 
   async getById(id: string): Promise<Character | undefined> {
@@ -136,7 +136,7 @@ export const characterService = {
 
 export const worldService = {
   async getAll(projectId: string): Promise<World[]> {
-    return db.worlds.where('projectId').equals(projectId).orderBy('name').toArray()
+    return db.worlds.where('projectId').equals(projectId).sortBy('name')
   },
 
   async getById(id: string): Promise<World | undefined> {
@@ -197,13 +197,12 @@ export const exerciseService = {
 
 export const imageService = {
   async getAll(projectId?: string | null, documentId?: string | null): Promise<ImageAttachment[]> {
-    let query = db.images.toCollection()
     if (projectId) {
-      query = db.images.where('projectId').equals(projectId)
+      return db.images.where('projectId').equals(projectId).sortBy('createdAt').then(imgs => imgs.reverse())
     } else if (documentId) {
-      query = db.images.where('documentId').equals(documentId)
+      return db.images.where('documentId').equals(documentId).sortBy('createdAt').then(imgs => imgs.reverse())
     }
-    return query.orderBy('createdAt').reverse().toArray()
+    return db.images.toCollection().sortBy('createdAt').then(imgs => imgs.reverse())
   },
 
   async getById(id: string): Promise<ImageAttachment | undefined> {

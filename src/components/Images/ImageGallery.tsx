@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
-import { Image as ImageIcon, X, Upload } from 'lucide-react'
+import { useEffect, useState, useCallback } from 'react'
+import { Image as ImageIcon, X, Upload, Share2 } from 'lucide-react'
 import { imageService } from '@/db/database'
 import type { ImageAttachment } from '@/types'
 import { useEditorStore } from '@/stores/editorStore'
+import { PinterestImport } from './PinterestImport'
 
 interface ImageGalleryProps {
   projectId: string | null
@@ -14,18 +15,19 @@ interface ImageGalleryProps {
 export function ImageGallery({ projectId, documentId, isOpen, onClose }: ImageGalleryProps) {
   const [images, setImages] = useState<ImageAttachment[]>([])
   const [isDragging, setIsDragging] = useState(false)
+  const [showPinterest, setShowPinterest] = useState(false)
   const { editor } = useEditorStore()
+
+  const loadImages = useCallback(async () => {
+    const imgs = await imageService.getAll(projectId, documentId)
+    setImages(imgs)
+  }, [projectId, documentId])
 
   useEffect(() => {
     if (isOpen) {
       loadImages()
     }
-  }, [isOpen, projectId, documentId])
-
-  const loadImages = async () => {
-    const imgs = await imageService.getAll(projectId, documentId)
-    setImages(imgs)
-  }
+  }, [isOpen, loadImages])
 
   const handleFileUpload = async (files: FileList) => {
     for (const file of Array.from(files)) {
@@ -99,23 +101,49 @@ export function ImageGallery({ projectId, documentId, isOpen, onClose }: ImageGa
             Images
           </h2>
         </div>
-        <button
-          onClick={onClose}
-          className="p-2 rounded hover:bg-neutral-100 dark:hover:bg-neutral-700"
-        >
-          <X className="w-4 h-4" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowPinterest(!showPinterest)}
+            className={`p-2 rounded hover:bg-neutral-100 dark:hover:bg-neutral-700 ${
+              showPinterest ? 'bg-primary-100 dark:bg-primary-900/30' : ''
+            }`}
+            title="Import from Pinterest"
+          >
+            <Share2 className={`w-4 h-4 ${showPinterest ? 'text-primary-600 dark:text-primary-400' : ''}`} />
+          </button>
+          <button
+            onClick={onClose}
+            className="p-2 rounded hover:bg-neutral-100 dark:hover:bg-neutral-700"
+            title="Close"
+            aria-label="Close image gallery"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
-      <div
-        className={`flex-1 overflow-y-auto p-4 ${
-          isDragging ? 'bg-primary-50 dark:bg-primary-900/20' : ''
-        }`}
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-      >
-        <label className="block mb-4">
+      {showPinterest ? (
+        <div className="flex-1 overflow-y-auto">
+          <PinterestImport
+            projectId={projectId}
+            documentId={documentId}
+            onImportComplete={() => {
+              loadImages()
+              setShowPinterest(false)
+            }}
+            onClose={() => setShowPinterest(false)}
+          />
+        </div>
+      ) : (
+        <div
+          className={`flex-1 overflow-y-auto p-4 ${
+            isDragging ? 'bg-primary-50 dark:bg-primary-900/20' : ''
+          }`}
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+        >
+          <label className="block mb-4">
           <div className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-neutral-300 dark:border-neutral-600 rounded-lg hover:border-primary-500 cursor-pointer">
             <Upload className="w-5 h-5" />
             <span className="text-sm text-neutral-600 dark:text-neutral-400">
@@ -148,6 +176,8 @@ export function ImageGallery({ projectId, documentId, isOpen, onClose }: ImageGa
                 <button
                   onClick={(e) => handleDeleteImage(image.id, e)}
                   className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                  title="Delete image"
+                  aria-label="Delete image"
                 >
                   <X className="w-3 h-3" />
                 </button>
@@ -162,7 +192,8 @@ export function ImageGallery({ projectId, documentId, isOpen, onClose }: ImageGa
             <p>No images yet. Drag and drop or upload images here.</p>
           </div>
         )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }

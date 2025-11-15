@@ -2,6 +2,24 @@
 
 This guide will walk you through adding API keys for AI providers and setting up GitHub Secrets for CI/CD workflows.
 
+## Using ChatGPT Web (Free - No API Keys Required)
+
+The easiest way to get started with AI in Inkwoven is using ChatGPT Web, which doesn't require any API keys:
+
+1. Open the AI Sidebar in Inkwoven
+2. If ChatGPT Web mode is enabled (default), you'll see a "Sign in to ChatGPT" button
+3. Click the button to open ChatGPT in a popup window
+4. Sign in with your OpenAI account
+5. Start chatting directly in the popup window
+
+**Benefits:**
+- ✅ No API keys needed
+- ✅ Free to use (ChatGPT free tier)
+- ✅ Full ChatGPT web interface
+- ✅ Conversation history saved in ChatGPT
+
+**Note:** ChatGPT Web opens in a separate popup window. You can toggle between ChatGPT Web and other AI providers in the Settings.
+
 ## Adding AI Provider API Keys in the App
 
 ### Step 1: Open the AI Sidebar
@@ -99,6 +117,76 @@ If you want to use the Figma design token sync workflow, you'll need to set up G
    - Clicking "Run workflow"
 
 The workflow will run automatically on weekdays at 6 AM, or you can trigger it manually anytime.
+
+---
+
+## Configuring Google Cloud OAuth for Gemini
+
+If you plan to authenticate with Google Gemini using OAuth instead of a direct API key, create OAuth client credentials in Google Cloud Console and store them in your `.env` file:
+
+1. Go to [Google Cloud Console Credentials](https://console.cloud.google.com/apis/credentials)
+2. Click **Create Credentials** → **OAuth client ID**
+3. Choose the appropriate application type (e.g., Web application)
+4. Add authorized origins/redirect URIs as needed
+5. After the client is created, copy the **Client ID** and **Client Secret**
+6. Update `.env` with:
+   ```
+   GOOGLE_OAUTH_CLIENT_ID=your_client_id
+   GOOGLE_OAUTH_CLIENT_SECRET=your_client_secret
+   ```
+7. Share these values with your team via a secure channel or store them as GitHub Secrets/Variables if the workflow will need them
+
+These credentials complement the existing `GEMINI_API_KEY` flow and prepare the project for future OAuth-based integrations.
+
+---
+
+## Setting Up OpenAI ChatKit
+
+ChatKit is OpenAI's embeddable chat widget that provides a rich, customizable chat experience with agent workflows. To use ChatKit in Inkwoven:
+
+### Step 1: Create an Agent Workflow
+
+1. Go to [OpenAI Agent Builder](https://platform.openai.com/agent-builder)
+2. Create a new agent workflow using the visual canvas
+3. Configure your workflow with the desired tools, prompts, and behavior
+4. Save the workflow and copy the **Workflow ID** (starts with `wf_`)
+
+### Step 2: Configure Environment Variables
+
+Add the workflow ID to your `.env` file:
+
+```bash
+VITE_CHATKIT_WORKFLOW_ID=wf_your_workflow_id_here
+```
+
+**Note**: Environment variables prefixed with `VITE_` are exposed to the client-side code. This is safe for workflow IDs as they're not sensitive credentials.
+
+### Step 3: Enable ChatKit in the App
+
+1. Open the AI Sidebar in Inkwoven
+2. Click the **Settings** icon (⚙️)
+3. Toggle **"Use OpenAI ChatKit"** to enable ChatKit mode
+4. Make sure you have an OpenAI API key configured (required for ChatKit)
+
+### Step 4: Use ChatKit
+
+Once enabled, the AI Sidebar will display the ChatKit widget instead of the custom chat interface. ChatKit provides:
+
+- Rich UI components and widgets
+- Tool invocation support
+- File attachments
+- Chain-of-thought visualizations
+- Customizable theming
+
+### Switching Between Modes
+
+You can toggle between ChatKit and the custom chat interface at any time using the toggle in Settings. Your preference is saved in localStorage.
+
+### Learn More
+
+- [ChatKit Documentation](https://platform.openai.com/docs/chatkit)
+- [ChatKit Examples](https://github.com/openai/chatkit-js)
+- [Agent Builder Guide](https://platform.openai.com/docs/agent-builder)
 
 ---
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Users, Plus, X, Edit2 } from 'lucide-react'
+import { Users, Plus, X } from 'lucide-react'
 import { characterService } from '@/db/database'
 import type { Character } from '@/types'
 
@@ -12,7 +12,6 @@ interface CharacterManagerProps {
 export function CharacterManager({ projectId, isOpen, onClose }: CharacterManagerProps) {
   const [characters, setCharacters] = useState<Character[]>([])
   const [isCreating, setIsCreating] = useState(false)
-  const [editingId, setEditingId] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     name: '',
     traits: '',

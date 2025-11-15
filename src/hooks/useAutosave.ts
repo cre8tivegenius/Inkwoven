@@ -6,7 +6,7 @@ const AUTOSAVE_INTERVAL = 10000 // 10 seconds
 
 export function useAutosave() {
   const { editor, currentDocument, setSaving, setLastSaved } = useEditorStore()
-  const autosaveTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const autosaveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => {
     if (!editor || !currentDocument) {

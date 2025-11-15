@@ -11,12 +11,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Sync Figma Tokens
-        uses: tokens-studio/figma-tokens-sync@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          figma_file_key: ${{ secrets.FIGMA_FILE_KEY }}
-          figma_token: ${{ secrets.FIGMA_API_TOKEN }}
-          output_path: './design-tokens/tokens.json'
+          node-version: '20'
+      
+      - name: Validate Secrets
+        run: |
+          if [ -z "${{ secrets.FIGMA_API_TOKEN }}" ]; then
+            echo "Error: FIGMA_API_TOKEN secret is not set"
+            exit 1
+          fi
+          if [ -z "${{ vars.FIGMA_FILE_KEY }}" ]; then
+            echo "Error: FIGMA_FILE_KEY variable is not set"
+            exit 1
+          fi
+      
+      - name: Sync Figma Tokens
+        env:
+          FIGMA_FILE_KEY: ${{ vars.FIGMA_FILE_KEY }}
+          FIGMA_API_TOKEN: ${{ secrets.FIGMA_API_TOKEN }}
+          OUTPUT_PATH: './design-tokens/tokens.json'
+        run: node scripts/sync-figma-tokens.js
       
       - name: Update Tailwind Theme
         run: |

@@ -20,26 +20,31 @@ export function DocumentList({
   const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
-    loadDocuments()
+    let isMounted = true
+    const fetchDocuments = async () => {
+      const docs = await documentService.getAll(projectId)
+      if (isMounted) {
+        setDocuments(docs)
+      }
+    }
+    fetchDocuments()
+    return () => {
+      isMounted = false
+    }
   }, [projectId])
-
-  const loadDocuments = async () => {
-    const docs = await documentService.getAll(projectId)
-    setDocuments(docs)
-  }
 
   const filteredDocuments = documents.filter((d) =>
     d.title.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   return (
-    <div className="w-64 border-r border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 flex flex-col h-full">
-      <div className="p-4 border-b border-neutral-200 dark:border-neutral-700">
+    <div className="w-64 glass-panel flex flex-col h-full flex-shrink-0">
+      <div className="p-4 border-b border-white/30 dark:border-neutral-800/60">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">Documents</h2>
+          <h2 className="text-lg font-semibold font-display text-neutral-900 dark:text-neutral-50">Documents</h2>
           <button
             onClick={onNewDocument}
-            className="p-1.5 rounded hover:bg-neutral-100 dark:hover:bg-neutral-700"
+            className="p-1.5 rounded-xl border border-transparent hover:border-primary-200 hover:bg-white/70 dark:hover:bg-neutral-800/70"
             title="New Document"
           >
             <Plus className="w-4 h-4" />
@@ -47,13 +52,13 @@ export function DocumentList({
         </div>
 
         <div className="relative">
-          <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search documents..."
-            className="w-full pl-8 pr-2 py-1.5 text-sm border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-50"
+            className="w-full pl-9 pr-3 py-2 text-sm border border-white/40 dark:border-neutral-700/70 rounded-2xl bg-white/70 dark:bg-neutral-900/40 text-neutral-900 dark:text-neutral-50 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:border-primary-300"
           />
         </div>
       </div>
@@ -63,12 +68,14 @@ export function DocumentList({
           <button
             key={doc.id}
             onClick={() => onSelectDocument(doc.id)}
-            className={`w-full text-left px-4 py-2 flex items-center gap-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 ${
-              selectedDocumentId === doc.id ? 'bg-neutral-100 dark:bg-neutral-700' : ''
+            className={`w-full text-left px-4 py-2.5 flex items-center gap-2 mx-2 mt-2 rounded-2xl transition-colors ${
+              selectedDocumentId === doc.id
+                ? 'bg-primary-100/70 text-neutral-900'
+                : 'hover:bg-white/60 dark:hover:bg-neutral-800/60'
             }`}
           >
-            <FileText className="w-4 h-4 flex-shrink-0" />
-            <span className="text-sm truncate">{doc.title || 'Untitled'}</span>
+            <FileText className="w-4 h-4 flex-shrink-0 text-primary-600" />
+            <span className="text-sm truncate font-medium">{doc.title || 'Untitled'}</span>
           </button>
         ))}
 

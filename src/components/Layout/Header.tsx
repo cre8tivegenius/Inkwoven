@@ -27,15 +27,22 @@ export function Header({
   const { theme, toggleTheme } = useThemeStore()
 
   return (
-    <header className="h-16 border-b border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 flex items-center justify-between px-6">
-      <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">Inkwoven</h1>
+    <header className="mx-6 my-4 h-20 glass-panel flex items-center justify-between px-8">
+      <div>
+        <p className="text-xs uppercase tracking-[0.3em] text-neutral-500 dark:text-neutral-300">
+          Story studio
+        </p>
+        <h1 className="text-3xl font-semibold font-display text-neutral-900 dark:text-neutral-50">
+          Inkwoven
+        </h1>
+      </div>
       <div className="flex items-center gap-2">
         {hasProject && (
           <>
             <button
               onClick={onToggleCharacters}
-              className={`p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors ${
-                charactersOpen ? 'bg-primary-100 dark:bg-primary-900/20' : ''
+              className={`p-2.5 rounded-2xl border border-transparent transition-all hover:border-primary-200 hover:bg-white/60 dark:hover:bg-neutral-800/70 ${
+                charactersOpen ? 'bg-primary-100/80 dark:bg-primary-900/30 border-primary-200' : ''
               }`}
               aria-label="Toggle Characters"
             >
@@ -43,8 +50,8 @@ export function Header({
             </button>
             <button
               onClick={onToggleWorlds}
-              className={`p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors ${
-                worldsOpen ? 'bg-primary-100 dark:bg-primary-900/20' : ''
+              className={`p-2.5 rounded-2xl border border-transparent transition-all hover:border-primary-200 hover:bg-white/60 dark:hover:bg-neutral-800/70 ${
+                worldsOpen ? 'bg-primary-100/80 dark:bg-primary-900/30 border-primary-200' : ''
               }`}
               aria-label="Toggle Worlds"
             >
@@ -54,8 +61,8 @@ export function Header({
         )}
         <button
           onClick={onToggleImages}
-          className={`p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors ${
-            imagesOpen ? 'bg-primary-100 dark:bg-primary-900/20' : ''
+          className={`p-2.5 rounded-2xl border border-transparent transition-all hover:border-primary-200 hover:bg-white/60 dark:hover:bg-neutral-800/70 ${
+            imagesOpen ? 'bg-primary-100/80 dark:bg-primary-900/30 border-primary-200' : ''
           }`}
           aria-label="Toggle Image Gallery"
         >
@@ -63,8 +70,8 @@ export function Header({
         </button>
         <button
           onClick={onToggleAI}
-          className={`p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors ${
-            aiOpen ? 'bg-primary-100 dark:bg-primary-900/20' : ''
+          className={`p-2.5 rounded-2xl border border-transparent transition-all hover:border-primary-200 hover:bg-white/60 dark:hover:bg-neutral-800/70 ${
+            aiOpen ? 'bg-primary-100/80 dark:bg-primary-900/30 border-primary-200' : ''
           }`}
           aria-label="Toggle AI Assistant"
         >
@@ -72,7 +79,7 @@ export function Header({
         </button>
         <button
           onClick={toggleTheme}
-          className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+          className="p-2.5 rounded-2xl border border-transparent hover:border-primary-200 hover:bg-white/60 dark:hover:bg-neutral-800/70 transition-colors"
           aria-label="Toggle theme"
         >
           {theme === 'dark' ? (

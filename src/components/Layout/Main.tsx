@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
 interface MainProps {
   children: ReactNode
@@ -6,8 +6,10 @@ interface MainProps {
 
 export function Main({ children }: MainProps) {
   return (
-    <main className="flex-1 overflow-hidden bg-neutral-50 dark:bg-neutral-900">
-      {children}
+    <main className="flex-1 overflow-hidden">
+      <div className="h-full glass-panel p-0 overflow-hidden">
+        {children}
+      </div>
     </main>
   )
 }

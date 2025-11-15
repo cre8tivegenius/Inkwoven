@@ -12,6 +12,16 @@ dist
 dist-ssr
 *.local
 
+# iOS
+ios/App/Pods/
+ios/App/build/
+ios/App/*.xcworkspace/xcuserdata/
+ios/App/*.xcodeproj/xcuserdata/
+ios/App/*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcuserstate
+*.xcuserdatad
+.DS_Store
+
 # Environment variables
 .env
 .env.local

@@ -1,30 +1,35 @@
 import { jsPDF } from 'jspdf'
-import { convert } from 'html-to-text'
-import type { Document } from '@/types'
+import type { Document as InkwovenDocument } from '@/types'
 
-export async function exportToTxt(document: Document): Promise<void> {
+// Helper to get DOM document
+const getDocument = () => {
+  if (typeof document !== 'undefined') return document
+  throw new Error('DOM document not available')
+}
+
+export async function exportToTxt(document: InkwovenDocument): Promise<void> {
   const text = extractPlainText(document.content)
   const blob = new Blob([text], { type: 'text/plain' })
   const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
+  const a = getDocument().createElement('a')
   a.href = url
   a.download = `${document.title || 'untitled'}.txt`
   a.click()
   URL.revokeObjectURL(url)
 }
 
-export async function exportToMarkdown(document: Document): Promise<void> {
+export async function exportToMarkdown(document: InkwovenDocument): Promise<void> {
   const markdown = convertTiptapToMarkdown(document.content)
   const blob = new Blob([markdown], { type: 'text/markdown' })
   const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
+  const a = getDocument().createElement('a')
   a.href = url
   a.download = `${document.title || 'untitled'}.md`
   a.click()
   URL.revokeObjectURL(url)
 }
 
-export async function exportToPdf(document: Document): Promise<void> {
+export async function exportToPdf(document: InkwovenDocument): Promise<void> {
   const pdf = new jsPDF()
   const text = extractPlainText(document.content)
   const lines = pdf.splitTextToSize(text, 180)
@@ -32,12 +37,12 @@ export async function exportToPdf(document: Document): Promise<void> {
   pdf.save(`${document.title || 'untitled'}.pdf`)
 }
 
-export async function exportToOdf(document: Document): Promise<void> {
+export async function exportToOdf(document: InkwovenDocument): Promise<void> {
   // ODF export is complex - for MVP, we'll export as HTML which can be opened in LibreOffice
   const html = convertTiptapToHTML(document.content)
   const blob = new Blob([html], { type: 'application/vnd.oasis.opendocument.text' })
   const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
+  const a = getDocument().createElement('a')
   a.href = url
   a.download = `${document.title || 'untitled'}.odt`
   a.click()
@@ -177,7 +182,7 @@ function convertTiptapToHTML(content: any): string {
 }
 
 function escapeHtml(text: string): string {
-  const div = document.createElement('div')
+  const div = getDocument().createElement('div')
   div.textContent = text
   return div.innerHTML
 }
